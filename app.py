@@ -203,7 +203,8 @@ if option == "CGPA from Scratch":
                 completed_grades.append(grade)
                 credits.append(credit)
 
-            # Diploma Projects
+            # Diploma Projects (Pre-Filled for Degree Students)
+            st.markdown("### 🛠️ Diploma Projects (Auto-Completed for Degree Students)")
             for proj, credit in projects["Diploma"]:
                 grade = st.selectbox(f"Grade for {proj} ({credit} credits):", ["S", "A", "B", "C", "D", "E", "F"], key=f"diploma_proj_{proj}")
                 completed_courses.append(proj)
@@ -249,7 +250,7 @@ else:
     last_cgpa = st.number_input("Enter your last term CGPA:", min_value=0.0, max_value=10.0, step=0.01)
     last_credits = st.number_input("Enter the total credits completed in the last term:", min_value=0, step=1)
 
-    st.markdown("### 📝 Current Term Courses and Projects")
+    st.markdown("### 📝 Current Term Courses")
     current_level = st.radio("Select your current academic level:", ["Foundational", "Diploma", "Degree"], horizontal=True)
     current_courses = []
     current_grades = []
@@ -265,17 +266,14 @@ else:
                 current_grades.append(grade)
                 current_credits.append(credit)
 
-    # Current Term Projects (Diploma Level)
-    if current_level in ["Diploma", "Degree"]:
-        st.markdown("### 🛠️ Current Term Projects")
-        selected_projects = st.multiselect("Select completed projects for the current term", [proj for proj, _ in projects["Diploma"]])
+    # Diploma Projects (Pre-Filled for Degree Students)
+    if current_level == "Degree":
+        st.markdown("### 🛠️ Diploma Projects (Auto-Completed for Degree Students)")
         for proj, credit in projects["Diploma"]:
-            if proj in selected_projects:
-                grade = st.selectbox(f"Grade for {proj} ({credit} credits):", ["Not Done", "S", "A", "B", "C", "D", "E", "F"], key=f"proj_{proj}")
-                if grade != "Not Done":
-                    current_courses.append(proj)
-                    current_grades.append(grade)
-                    current_credits.append(credit)
+            grade = st.selectbox(f"Grade for {proj} ({credit} credits):", ["S", "A", "B", "C", "D", "E", "F"], key=f"proj_{proj}")
+            current_courses.append(proj)
+            current_grades.append(grade)
+            current_credits.append(credit)
 
     # Calculate Current Term CGPA
     if st.button("📈 Calculate Current Term CGPA"):
