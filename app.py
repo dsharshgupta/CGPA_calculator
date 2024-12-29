@@ -76,8 +76,8 @@ st.markdown("""
 st.markdown("## Choose Calculation Method")
 option = st.radio(
     "Select an option below:",
-    ["CGPA from Scratch", "Current Term CGPA"],
-    horizontal=True
+    ["Current Term CGPA","CGPA from Scratch"],
+    horizontal=False
 )
 
 # Add this section just below the "Choose Calculation Method" radio button
