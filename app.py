@@ -250,30 +250,58 @@ else:
     last_cgpa = st.number_input("Enter your last term CGPA:", min_value=0.0, max_value=10.0, step=0.01)
     last_credits = st.number_input("Enter the total credits completed in the last term:", min_value=0, step=1)
 
-    st.markdown("### 📝 Current Term Courses")
+    st.markdown("### 📝 Current Term Courses and Projects")
     current_level = st.radio("Select your current academic level:", ["Foundational", "Diploma", "Degree"], horizontal=True)
     current_courses = []
     current_grades = []
     current_credits = []
 
-    # Current Term Courses
-    selected_courses = st.multiselect("Select completed courses for the current term", [course for course, _ in courses[current_level]])
-    for course, credit in courses[current_level]:
-        if course in selected_courses:
-            grade = st.selectbox(f"Grade for {course} ({credit} credits):", ["Not Done", "S", "A", "B", "C", "D", "E", "F"], key=f"current_{course}")
-            if grade != "Not Done":
-                current_courses.append(course)
-                current_grades.append(grade)
-                current_credits.append(credit)
+    # Current Term Courses and Projects for Diploma Level
+    if current_level == "Diploma":
+        available_items = [(course, credit) for course, credit in courses["Diploma"]] + [
+            (proj, credit) for proj, credit in projects["Diploma"]
+        ]
+        selected_items = st.multiselect(
+            "Select completed courses and projects for the current term",
+            [item[0] for item in available_items]
+        )
+        for item, credit in available_items:
+            if item in selected_items:
+                grade = st.selectbox(f"Grade for {item} ({credit} credits):", ["Not Done", "S", "A", "B", "C", "D", "E", "F"], key=f"current_diploma_{item}")
+                if grade != "Not Done":
+                    current_courses.append(item)
+                    current_grades.append(grade)
+                    current_credits.append(credit)
 
-    # Diploma Projects (Pre-Filled for Degree Students)
-    if current_level == "Degree":
-        st.markdown("### 🛠️ Diploma Projects (Auto-Completed for Degree Students)")
-        for proj, credit in projects["Diploma"]:
-            grade = st.selectbox(f"Grade for {proj} ({credit} credits):", ["S", "A", "B", "C", "D", "E", "F"], key=f"proj_{proj}")
-            current_courses.append(proj)
-            current_grades.append(grade)
-            current_credits.append(credit)
+    # Current Term Courses for Degree Level
+    elif current_level == "Degree":
+        available_courses = [(course, credit) for course, credit in courses["Degree"]]
+        selected_courses = st.multiselect(
+            "Select completed courses for the current term",
+            [course[0] for course in available_courses]
+        )
+        for course, credit in available_courses:
+            if course in selected_courses:
+                grade = st.selectbox(f"Grade for {course} ({credit} credits):", ["Not Done", "S", "A", "B", "C", "D", "E", "F"], key=f"current_degree_{course}")
+                if grade != "Not Done":
+                    current_courses.append(course)
+                    current_grades.append(grade)
+                    current_credits.append(credit)
+
+    # Current Term Courses for Foundational Level
+    elif current_level == "Foundational":
+        available_courses = [(course, credit) for course, credit in courses["Foundational"]]
+        selected_courses = st.multiselect(
+            "Select completed courses for the current term",
+            [course[0] for course in available_courses]
+        )
+        for course, credit in available_courses:
+            if course in selected_courses:
+                grade = st.selectbox(f"Grade for {course} ({credit} credits):", ["Not Done", "S", "A", "B", "C", "D", "E", "F"], key=f"current_foundation_{course}")
+                if grade != "Not Done":
+                    current_courses.append(course)
+                    current_grades.append(grade)
+                    current_credits.append(credit)
 
     # Calculate Current Term CGPA
     if st.button("📈 Calculate Current Term CGPA"):
