@@ -176,7 +176,8 @@ projects = {
     ]
 }
 
-# CGPA Calculation from Scratch
+# Updated Code Section for CGPA from Scratch
+
 if option == "CGPA from Scratch":
     st.markdown("### Select Academic Level")
     level = st.radio("Select your academic level:", ["Foundational", "Diploma", "Degree"], horizontal=True)
@@ -193,20 +194,32 @@ if option == "CGPA from Scratch":
                 completed_grades.append(grade)
                 credits.append(credit)
 
-    with st.expander("Diploma Level Courses"):
+    with st.expander("Diploma Level Courses and Projects"):
         if level == "Degree":
+            # Diploma Courses
             for course, credit in courses["Diploma"]:
                 grade = st.selectbox(f"Grade for {course} ({credit} credits):", ["S", "A", "B", "C", "D", "E", "F"], key=f"diploma_{course}")
                 completed_courses.append(course)
                 completed_grades.append(grade)
                 credits.append(credit)
 
-        if level == "Degree":
+            # Diploma Projects
             for proj, credit in projects["Diploma"]:
                 grade = st.selectbox(f"Grade for {proj} ({credit} credits):", ["S", "A", "B", "C", "D", "E", "F"], key=f"diploma_proj_{proj}")
                 completed_courses.append(proj)
                 completed_grades.append(grade)
                 credits.append(credit)
+
+        if level == "Diploma":
+            # Allow Diploma students to select projects dynamically
+            selected_projects = st.multiselect("Select completed Diploma projects", [proj for proj, _ in projects["Diploma"]])
+            for proj, credit in projects["Diploma"]:
+                if proj in selected_projects:
+                    grade = st.selectbox(f"Grade for {proj} ({credit} credits):", ["Not Done", "S", "A", "B", "C", "D", "E", "F"], key=f"diploma_proj_{proj}")
+                    if grade != "Not Done":
+                        completed_courses.append(proj)
+                        completed_grades.append(grade)
+                        credits.append(credit)
 
     # Current level courses
     with st.expander("Current Level Courses"):
@@ -229,18 +242,20 @@ if option == "CGPA from Scratch":
             </div>
         """, unsafe_allow_html=True)
 
-# Current Term CGPA Calculation
+# Updated Code Section for Current Term CGPA
+
 else:
     st.markdown("### 📋 Enter Previous Term Information")
     last_cgpa = st.number_input("Enter your last term CGPA:", min_value=0.0, max_value=10.0, step=0.01)
     last_credits = st.number_input("Enter the total credits completed in the last term:", min_value=0, step=1)
 
-    st.markdown("### 📝 Current Term Courses")
+    st.markdown("### 📝 Current Term Courses and Projects")
     current_level = st.radio("Select your current academic level:", ["Foundational", "Diploma", "Degree"], horizontal=True)
     current_courses = []
     current_grades = []
     current_credits = []
 
+    # Current Term Courses
     selected_courses = st.multiselect("Select completed courses for the current term", [course for course, _ in courses[current_level]])
     for course, credit in courses[current_level]:
         if course in selected_courses:
@@ -250,6 +265,19 @@ else:
                 current_grades.append(grade)
                 current_credits.append(credit)
 
+    # Current Term Projects (Diploma Level)
+    if current_level in ["Diploma", "Degree"]:
+        st.markdown("### 🛠️ Current Term Projects")
+        selected_projects = st.multiselect("Select completed projects for the current term", [proj for proj, _ in projects["Diploma"]])
+        for proj, credit in projects["Diploma"]:
+            if proj in selected_projects:
+                grade = st.selectbox(f"Grade for {proj} ({credit} credits):", ["Not Done", "S", "A", "B", "C", "D", "E", "F"], key=f"proj_{proj}")
+                if grade != "Not Done":
+                    current_courses.append(proj)
+                    current_grades.append(grade)
+                    current_credits.append(credit)
+
+    # Calculate Current Term CGPA
     if st.button("📈 Calculate Current Term CGPA"):
         current_cgpa = calculate_cgpa(current_grades, current_credits)
         overall_cgpa = update_overall_cgpa(last_cgpa, last_credits, current_cgpa, sum(current_credits))
