@@ -12,7 +12,7 @@ def grade_to_points(grade):
         "B": 8,
         "C": 7,
         "D": 6,
-        "E": 5,
+        "E": 4,
         "F": 0
     }
     return grade_map.get(grade.upper(), 0)
